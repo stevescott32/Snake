@@ -1,0 +1,133 @@
+:root {
+  --main-dark: #1c211c;
+  --main-txt-color: #cce8cc; 
+  --main-greenColor: #4CAF50; 
+  --main-dark-contrast: grey; 
+}
+
+h1 {color: var(--main-txt-color);}
+h2 {color: var(--main-txt-color);}
+h3 {color: var(--main-txt-color);}
+p  {color: var(--main-txt-color);}
+li {color: var(--main-txt-color);}
+
+body {
+  background-color: var(--main-dark);  
+  width: 100%; 
+  height: 90%;
+  padding: 0;
+  margin: 0; 
+}
+
+input {
+}
+
+canvas {
+
+}
+
+.basicButton {
+  transition: all 0.5s; 
+  text-align: center; 
+  border: 4px solid;  
+  cursor: pointer;
+}
+
+.greenButton {
+  background-color: green; 
+  color: var(--main-dark); 
+}
+
+.greenButton:hover {
+  background-color: var(--main-greenColor);
+  color: var(--main-dark); 
+}
+
+.greenButton span:after {
+  background-color: green; 
+  color: #1c211c; 
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.largeButton {
+  font-size:20px;
+  padding: 12px 28px;
+  border-radius: 12px;
+  margin: 5px; 
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: auto; 
+}
+
+header {
+  display: flex;
+  justify-content: center; 
+  text-align: center;
+  display: block; 
+  margin-left: auto; 
+  margin-right: auto;
+  margin-top: auto; 
+}
+
+footer {
+  display: flex;
+  justify-content: center; 
+  text-align: center;
+  display: block; 
+  margin-left: auto; 
+  margin-right: auto;
+  margin-top: auto; 
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 50px;
+}
+
+.leftFrame {
+  top: 15%; 
+  left: 0;
+  width: 50%; 
+  float: left; 
+  border: 4px; 
+  border-color: white; 
+  overflow-y: scroll; 
+  position: fixed; 
+  height: 75%; 
+}
+
+.rightFrame {
+  top: 15%;  
+  left: 50%; 
+  width: 50%; 
+  float: right; 
+  border: 4px; 
+  border-color: white; 
+  position: fixed; 
+  height: 75%; 
+}
+
+.noBullet {
+  list-style-type: none;
+}
+
+.inline {
+  display: inline; 
+  padding: 52px; 
+}
+
+.events {
+
+}
+
