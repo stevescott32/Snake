@@ -1,7 +1,10 @@
 // Author: Steven Scott
 // styling constants
-let borderCellColor = '#393E41';
-let emptyCellColor = '#2B6845'; 
+let borderCellColor = 'black'; // '#393E41';
+let emptyCellColor = 'green'; //'#2B6845'; 
+let obstacleCellColor = 'blue'; 
+let snakeCellColor = 'white'; 
+let appleCellColor = 'red'; 
 
 // time constants
 let current = performance.now(); 
@@ -24,6 +27,10 @@ let snake = 3;
 let empty = 4; 
 
 function initGrid() {
+  let obstaclesCreated = 0;
+  let totalObstacles = 15; 
+  let headCreated = false; 
+  let firstApplePlaced = false; 
   for(let i = 0; i < rows; i++) {
     grid.push([]); 
     for(let j = 0; j < cols; j++) {
@@ -35,6 +42,28 @@ function initGrid() {
       }
     }; 
   };
+
+  while(!headCreated || !firstApplePlaced) {
+    let randX = Math.floor((Math.random() * rows));
+    let randY = Math.floor((Math.random() * cols)); 
+    if(grid[randX][randY] == empty && !headCreated) {
+      grid[randX][randY] = 3; 
+      headCreated = true; 
+    }
+    else if(grid[randX][randY] == empty && !firstApplePlaced)
+    {
+      grid[randX][randY] = 1; 
+      firstApplePlaced = true; 
+    }
+  }
+  while(obstaclesCreated < totalObstacles) {
+    let randX = Math.floor((Math.random() * rows));
+    let randY = Math.floor((Math.random() * cols)); 
+    if(grid[randX][randY] == empty) {
+      grid[randX][randY] = 2; 
+      obstaclesCreated++; 
+    }
+  }
 }; 
 
 function button() {
@@ -59,6 +88,15 @@ function render() {
       if(grid[i][j] == border){
         context.fillStyle = borderCellColor; 
       }
+      else if(grid[i][j] == obstacle) {
+        context.fillStyle = obstacleCellColor; 
+      }
+      else if(grid[i][j] == snake) {
+        context.fillStyle = snakeCellColor; 
+      }
+      else if(grid[i][j] == apple) {
+        context.fillStyle = appleCellColor; 
+      } 
       else {
         context.fillStyle = emptyCellColor;  
       }
