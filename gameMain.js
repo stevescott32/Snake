@@ -6,7 +6,7 @@ let obstacleCellColor = 'blue';
 let snakeCellColor = 'white'; 
 let appleCellColor = 'red'; 
 
-// time constants
+// time 
 let current = performance.now(); 
 let past = current; 
 let timeElapsed = current - past; //initialized to 0
@@ -25,6 +25,10 @@ let apple = 1;
 let obstacle = 2;
 let snake = 3; 
 let empty = 4; 
+
+let snakeDirection=''; 
+let snakeHead = {x: 0, y: 0}; 
+let snakeTail = {x: 0, y: 0}; 
 
 function initGrid() {
   let obstaclesCreated = 0;
@@ -48,6 +52,10 @@ function initGrid() {
     let randY = Math.floor((Math.random() * cols)); 
     if(grid[randX][randY] == empty && !headCreated) {
       grid[randX][randY] = 3; 
+      snakeHead.x = randX; 
+      snakeHead.y = randY;
+      snakeTail.x = randX;
+      snakeTail.y = randY; 
       headCreated = true; 
     }
     else if(grid[randX][randY] == empty && !firstApplePlaced)
@@ -69,17 +77,56 @@ function initGrid() {
 function button() {
 }; 
 
+
+function onKeyDown(e) {
+        if (e.keyCode === KeyEvent.DOM_VK_A) {
+          console.log('Should move left'); 
+          snakeDirection = 'l'; 
+        }
+        else if (e.keyCode === KeyEvent.DOM_VK_D) {
+          console.log('Should move right'); 
+          snakeDirection = 'r'; 
+        } 
+        else if (e.keyCode === KeyEvent.DOM_VK_W) {
+          console.log('Should move up'); 
+          snakeDirection = 'u'; 
+        } 
+        else if (e.keyCode === KeyEvent.DOM_VK_S) {
+          console.log('Should move down'); 
+          snakeDirection = 'd'; 
+        }
+};
+
+
 function update(timeElapsed) {
-  // update all values for the game 
-  //for(let i = 0; i < grid.length; i++) {
-   // for(let j = 0; j < grid[i].length; j++) {
-   // }; 
- // }; 
+  let moved = true; 
+  if(snakeDirection == '') {
+    console.log('move the snake please'); 
+    moved = false; 
+  }
+  else if(snakeDirection == 'u') {
+    snakeHead.y--; 
+  }
+  else if(snakeDirection == 'd') {
+    snakeHead.y++;
+  }
+  else if(snakeDirection == 'r') {
+    snakeHead.x++; 
+  }
+  else if(snakeDirection == 'l') {
+    snakeHead.x--; 
+  }
+  if(moved && grid[snakeHead.x][snakeHead.y] != empty) {
+    console.log('You dead'); 
+    quit = true; 
+  }
+  else if(moved){
+   grid[snakeHead.x][snakeHead.y] = 3;  
+  }
 }; 
 
 function render() {
   // render all game elements
-  console.log('Rendering at time ' + timeElapsed); 
   let canvas = document.getElementById('canvas'); 
   let context = canvas.getContext('2d'); 
 //  context.strokeStyle = "blue"; 
@@ -118,5 +165,5 @@ function gameLoop(){
 }; 
 
 initGrid(); 
-
+window.addEventListener('keydown', onKeyDown);
 requestAnimationFrame(gameLoop); 
