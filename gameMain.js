@@ -377,6 +377,10 @@ function gameLoop() {
 };
 
 // process inputs
+// inputs can come from arrow keys, WASD, or hjkl(vim) 
+// space, enter, or n to start new game, 
+// c to clear high scores 
+// esc to end game, check for high score, and start new game 
 function onKeyDown(e) {
   if (e.keyCode === KeyEvent.DOM_VK_A 
     || e.keyCode === KeyEvent.DOM_VK_LEFT
@@ -399,11 +403,20 @@ function onKeyDown(e) {
     nextDirection = 'd';
   }
   else if (e.keyCode === KeyEvent.DOM_VK_SPACE
+    || e.keyCode === KeyEvent.DOM_VK_ENTER
+    || e.keyCode === KeyEvent.DOM_VK_RETURN
     || e.keyCode === KeyEvent.DOM_VK_N) {
     restartButton();
   }
   else if(e.keyCode === KeyEvent.DOM_VK_C) {
     clearHighScoresButton(); 
+  }
+  else if(e.keyCode === KeyEvent.DOM_VK_T) {
+    developerCredits(); 
+  }
+  else if(e.keyCode === KeyEvent.DOM_VK_ESCAPE) {
+    endGame(); 
+    restartButton(); 
   }
 };
 

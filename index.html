@@ -16,18 +16,18 @@
       <canvas id="canvas" width="500" height="500"></canvas>
     </div>
     <div id="right" class="rightFrame">
-      <button class="basicButton greenButton largeButton" onclick="restartButton()">
+      <button id="restart-button" class="basicButton greenButton largeButton" onclick="restartButton()">
         <span>New Game</span>
       </button>
       <h1>High Scores:</h1>
       <div id='highScoresList'>
         <p>Initializing...</p>
       </div>
-        <button class="basicButton greenButton smallButton" onclick="clearHighScoresButton()">
+        <button id="clear-high-scores-button" class="basicButton greenButton smallButton" onclick="clearHighScoresButton()">
           Clear High Scores
         </button>
       <div id="notify-of-high-score"></div>
-      <button class="basicButton greenButton smallButton" onclick="developerCredits()">
+      <button id="developer-credits-button" class="basicButton greenButton smallButton" onclick="developerCredits()">
         Dev Credits
       </button>
     </div>
