@@ -12,10 +12,10 @@
   <h3>Snake</h3>
 </header>
 <body class="center">
-    <div id='left' class="leftFrame">
-      <canvas id='canvas' width="500" height="500"></canvas>
+    <div id="left" class="leftFrame">
+      <canvas id="canvas" width="500" height="500"></canvas>
     </div>
-    <div id='right' class="rightFrame">
+    <div id="right" class="rightFrame">
       <button class="basicButton greenButton largeButton" onclick="restartButton()">
         <span>New Game</span>
       </button>
@@ -23,6 +23,13 @@
       <div id='highScoresList'>
         <p>Initializing...</p>
       </div>
+        <button class="basicButton greenButton smallButton" onclick="clearHighScoresButton()">
+          Clear High Scores
+        </button>
+      <div id="notify-of-high-score"></div>
+      <button class="basicButton greenButton smallButton" onclick="developerCredits()">
+        Dev Credits
+      </button>
     </div>
 
 </body>

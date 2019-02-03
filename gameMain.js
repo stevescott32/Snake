@@ -151,6 +151,30 @@ function displayHighScores() {
   }
 }
 
+function removeHighScoreNotification() {
+  let notifyParent = document.getElementById('notify-of-high-score'); 
+
+  while(notifyParent && notifyParent.firstChild) {
+    notifyParent.removeChild(notifyParent.firstChild); 
+  }
+}
+
+function notifyOfNewHighScore(snakeLength, time) {
+  let notifyParent = document.getElementById('notify-of-high-score'); 
+
+  let text = 'You just created a new high score!!!'; 
+  let stats = 'Snake Length: ' + snakeLength + ' --> Time: ' + Math.round(time / 1000) + ' seconds'; 
+  let textChild = document.createElement('P'); 
+  let statsChild = document.createElement('P'); 
+  let notificationText = document.createTextNode(text); 
+  let statsText = document.createTextNode(stats); 
+
+  textChild.appendChild(notificationText); 
+  statsChild.appendChild(statsText); 
+  notifyParent.appendChild(textChild);
+  notifyParent.appendChild(statsChild);  
+}
+
 // see if the current score makes it into the high score list
 function checkForHighScores() {
   let highScoreAdded = false;
@@ -178,17 +202,20 @@ function checkForHighScores() {
     highScores.push({ snakeLength: snakeLength, time: totalTime });
     highScoreAdded = true;
   }
+  if(highScoreAdded){
+    notifyOfNewHighScore(snakeLength, totalTime); 
+  }
 }
 
+// set high scores in local storage so they persist
 function storeHighScores() {
   let highScoreString = JSON.stringify(highScores);
-  console.log('Setting high scores as ' + highScoreString);
   window.localStorage.setItem('highScores', highScoreString);
 }
 
+// retrieve all high scores from local storage
 function getHighScores() {
   let highScoresString = window.localStorage.getItem('highScores');
-  console.log('Getting high scores as ' + highScoresString);
   if (highScoresString) {
     highScores = JSON.parse(highScoresString);
   }
@@ -209,9 +236,18 @@ function restartButton() {
   quit = false;
   nextDirection = '';
   currentDirection = '';
+  removeHighScoreNotification(); 
   setupGame();
   requestAnimationFrame(gameLoop);
 };
+
+function clearHighScoresButton() {
+  removeHighScoreNotification(); 
+  highScores = []; 
+  storeHighScores(); 
+  getHighScores(); 
+  displayHighScores(); 
+}
 
 // check if the current direction should be updated
 // and move the snakeHead based on current direction
@@ -342,20 +378,32 @@ function gameLoop() {
 
 // process inputs
 function onKeyDown(e) {
-  if (e.keyCode === KeyEvent.DOM_VK_A || e.keyCode === KeyEvent.DOM_VK_LEFT) {
+  if (e.keyCode === KeyEvent.DOM_VK_A 
+    || e.keyCode === KeyEvent.DOM_VK_LEFT
+    || e.keyCode === KeyEvent.DOM_VK_H) {
     nextDirection = 'l';
   }
-  else if (e.keyCode === KeyEvent.DOM_VK_D || e.keyCode === KeyEvent.DOM_VK_RIGHT) {
+  else if (e.keyCode === KeyEvent.DOM_VK_D 
+    || e.keyCode === KeyEvent.DOM_VK_RIGHT
+    || e.keyCode === KeyEvent.DOM_VK_L) {
     nextDirection = 'r';
   }
-  else if (e.keyCode === KeyEvent.DOM_VK_W || e.keyCode === KeyEvent.DOM_VK_UP) {
+  else if (e.keyCode === KeyEvent.DOM_VK_W 
+    || e.keyCode === KeyEvent.DOM_VK_UP
+    || e.keyCode === KeyEvent.DOM_VK_K) {
     nextDirection = 'u';
   }
-  else if (e.keyCode === KeyEvent.DOM_VK_S || e.keyCode === KeyEvent.DOM_VK_DOWN) {
+  else if (e.keyCode === KeyEvent.DOM_VK_S 
+    || e.keyCode === KeyEvent.DOM_VK_DOWN
+    || e.keyCode === KeyEvent.DOM_VK_J) {
     nextDirection = 'd';
   }
-  else if (e.keyCode === KeyEvent.DOM_VK_SPACE) {
+  else if (e.keyCode === KeyEvent.DOM_VK_SPACE
+    || e.keyCode === KeyEvent.DOM_VK_N) {
     restartButton();
+  }
+  else if(e.keyCode === KeyEvent.DOM_VK_C) {
+    clearHighScoresButton(); 
   }
 };
 
@@ -363,3 +411,9 @@ function onKeyDown(e) {
 setupGame();
 window.addEventListener('keydown', onKeyDown);
 requestAnimationFrame(gameLoop); 
+
+function developerCredits() {
+  let message = "Development, Testing, UX: Steven Scott" 
+  + "\nGame Testers: Katie Taylor, Glen Scott, Ryan Scott"; 
+  alert(message);
+}
