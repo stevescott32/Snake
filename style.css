@@ -19,13 +19,6 @@ body {
   margin: 0; 
 }
 
-input {
-}
-
-canvas {
-
-}
-
 .basicButton {
   transition: all 0.5s; 
   text-align: center; 
@@ -126,8 +119,3 @@ footer {
   display: inline; 
   padding: 52px; 
 }
-
-.events {
-
-}
-
