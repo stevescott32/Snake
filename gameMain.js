@@ -10,7 +10,7 @@ let emptyCellColor = 'green'; //'#2B6845';
 let obstacleCellColor = 'blue';
 let snakeCellColor = 'white';
 let appleCellColor = 'red';
-let cellBorderColor = 'black'; 
+let cellBorderColor = 'black';
 
 // grid constants
 let rows = 50;
@@ -30,13 +30,14 @@ let timeElapsed = current - past; //initialized to 0
 let snakeSpeed = 150;
 let accumulatedTime = 0;
 let startTime = performance.now();
-let endTime = performance.now(); 
+let endTime = performance.now();
 let quit = false;
+let highScoresInitialized = false;
 
 // grid
 let grid = [];
 let snake = [];
-let highScores = []; 
+let highScores = [];
 
 // cell magic numbers
 let borderCell = 0;
@@ -46,28 +47,33 @@ let snakeCell = 3;
 let emptyCell = 4;
 
 let currentDirection = '';
-let nextDirection = ''; 
-let snakeHead = {x: 0, y: 0};
+let nextDirection = '';
+let snakeHead = { x: 0, y: 0 };
 let snakeLength = 1;
 
+// initialize the game 
 function setupGame() {
   grid = [];
   snake = [];
   snakeLength = 1;
   timeElapsed = 0;
-  accumulatedTime = 0; 
+  accumulatedTime = 0;
   current = performance.now();
-  past = performance.now(); 
-  startTime = performance.now(); 
-  snakeHead.x = 0; 
-  snakeHead.y = 0; 
+  past = performance.now();
+  startTime = performance.now();
+  snakeHead.x = 0;
+  snakeHead.y = 0;
 
   createBorderAndBackground();
   placeSnakeHead();
   placeNewApple();
   placeObstacles();
+
+  getHighScores();
+  displayHighScores();
 };
 
+// put a border around the board and create the background
 function createBorderAndBackground() {
   for (let i = 0; i < rows; i++) {
     grid.push([]);
@@ -82,6 +88,7 @@ function createBorderAndBackground() {
   };
 }
 
+// put the snake on the board - not on the border or on anything else
 function placeSnakeHead() {
   let headCreated = false;
   while (!headCreated) {
@@ -89,14 +96,15 @@ function placeSnakeHead() {
     let randY = Math.floor((Math.random() * cols));
     if (grid[randX][randY] == emptyCell && !headCreated) {
       grid[randX][randY] = 3;
-      snakeHead.x = randX; 
-      snakeHead.y = randY; 
+      snakeHead.x = randX;
+      snakeHead.y = randY;
       snake.push({ x: randX, y: randY });
       headCreated = true;
     }
   }
 }
 
+// put a new apple on the board - not on anything else
 function placeNewApple() {
   let applePlaced = false;
   while (!applePlaced) {
@@ -109,6 +117,7 @@ function placeNewApple() {
   }
 }
 
+// place all obstacles on the game board
 function placeObstacles() {
   let obstaclesCreated = 0;
   while (obstaclesCreated < totalObstacles) {
@@ -121,101 +130,128 @@ function placeObstacles() {
   }
 }
 
+// print the high score list
 function displayHighScores() {
-  let highScoresList = document.getElementById('highScoresList'); 
-  while(highScoresList.firstChild){
-    highScoresList.removeChild(highScoresList.firstChild);
-  }
-  for(let i = 0; i < highScores.length; i++) {
-    let newHighScore = document.createElement('p'); 
-    let newHighScoreText = document.createTextNode('Snake Length: ' + highScores[i].snakeLength + ' Time: ' + highScores[i].time); 
-    newHighScore.appendChild(newHighScoreText); 
-    highScoresList.appendChild(newHighScore); 
+  console.log('printing the high scores');
+  let highScoresList = document.getElementById('highScoresList');
+  if (highScoresList) {
+    while (highScoresList.firstChild) {
+      highScoresList.removeChild(highScoresList.firstChild);
+    }
+    if (highScores) {
+      for (let i = 0; i < highScores.length; i++) {
+        let newHighScore = document.createElement('p');
+        let newHighScoreText = document.createTextNode('Snake Length: ' +
+          highScores[i].snakeLength + ' --> Time: ' + Math.round(highScores[i].time / 1000) + ' seconds');
+        newHighScore.appendChild(newHighScoreText);
+        highScoresList.appendChild(newHighScore);
+      }
+    }
+    highScoresInitialized = true;
   }
 }
 
+// see if the current score makes it into the high score list
 function checkForHighScores() {
-  let highScoreAdded = false; 
-  let totalTime = endTime - startTime; 
-  if(highScores.length == 0) {
-    highScores.push({snakeLength: snakeLength, time: totalTime}); 
+  let highScoreAdded = false;
+  let totalTime = endTime - startTime;
+  if (!highScores || highScores.length == 0) {
+    highScores.push({ snakeLength: snakeLength, time: totalTime });
     highScoreAdded = true;
   }
   else {
-    let hsLength = highScores.length; 
-    for(let s = 0; s < hsLength; s++) {
-      if(snakeLength >= highScores[s].snakeLength) {
-        highScores.splice(s, 0, {snakeLength: snakeLength, time: totalTime}); 
+    let hsLength = highScores.length;
+    for (let s = 0; s < hsLength; s++) {
+      if (!highScoreAdded && snakeLength >= highScores[s].snakeLength) {
+        highScores.splice(s, 0, { snakeLength: snakeLength, time: totalTime });
         highScoreAdded = true;
-        break; 
+        break;
       }
     }
   }
-  if(highScores.length > 5) {
-    for(let tooMany = highScores.length; tooMany > 5; tooMany--) {
-      highScores.pop(); 
+  if (highScores.length > 5) {
+    for (let tooMany = highScores.length; tooMany > 5; tooMany--) {
+      highScores.pop();
     }
   }
-  else if(highScores.length < 5 && !highScoreAdded) 
-  {
-    highScores.push({snakeLength: snakeLength, time: totalTime}); 
-    highScoreAdded = true; 
+  else if (highScores.length < 5 && !highScoreAdded) {
+    highScores.push({ snakeLength: snakeLength, time: totalTime });
+    highScoreAdded = true;
   }
 }
 
-function endGame() {
-  console.log('Ending game'); 
-  quit = true; 
-  endTime = performance.now(); 
-  checkForHighScores(); 
-  displayHighScores();
+function storeHighScores() {
+  let highScoreString = JSON.stringify(highScores);
+  console.log('Setting high scores as ' + highScoreString);
+  window.localStorage.setItem('highScores', highScoreString);
 }
 
+function getHighScores() {
+  let highScoresString = window.localStorage.getItem('highScores');
+  console.log('Getting high scores as ' + highScoresString);
+  if (highScoresString) {
+    highScores = JSON.parse(highScoresString);
+  }
+}
+
+// quit the game 
+function endGame() {
+  console.log('Ending game');
+  quit = true;
+  endTime = performance.now();
+  checkForHighScores();
+  displayHighScores();
+  storeHighScores();
+}
+
+// restart the game, resetting all needed values
 function restartButton() {
   quit = false;
   nextDirection = '';
-  currentDirection = ''; 
+  currentDirection = '';
   setupGame();
   requestAnimationFrame(gameLoop);
 };
 
+// check if the current direction should be updated
+// and move the snakeHead based on current direction
 function updateDirection() {
   // see if current direction should be updated
   if (nextDirection == 'u' && currentDirection != 'd') {
-    currentDirection = 'u'; 
+    currentDirection = 'u';
   }
   else if (nextDirection == 'd' && currentDirection != 'u') {
-    currentDirection = 'd'; 
+    currentDirection = 'd';
   }
   else if (nextDirection == 'r' && currentDirection != 'l') {
     currentDirection = 'r';
   }
   else if (nextDirection == 'l' && currentDirection != 'r') {
-    currentDirection = 'l'; 
+    currentDirection = 'l';
   }
   // update the snakeHead with currentDirection
   if (currentDirection == 'u') {
     snakeHead.y--;
-    return true; 
+    return true;
   }
   else if (currentDirection == 'd') {
     snakeHead.y++;
-    return true; 
+    return true;
   }
   else if (currentDirection == 'r') {
     snakeHead.x++;
-    return true; 
+    return true;
   }
   else if (currentDirection == 'l') {
     snakeHead.x--;
-    return true; 
+    return true;
   }
   else {
-    console.log('Error: no direction');
-    return false; 
+    return false;
   }
 }
 
+// move the snake according to the current direction
 function moveSnake() {
   let moved = updateDirection();
   // check if the snake has encountered an apple or other non-empty cell
@@ -226,7 +262,7 @@ function moveSnake() {
     placeNewApple();
   }
   else if (moved && grid[snakeHead.x][snakeHead.y] != emptyCell) {
-    endGame(); 
+    endGame();
   }
   else if (moved) {
     if (snakeLength == snake.length) {
@@ -241,48 +277,57 @@ function moveSnake() {
   }
 }
 
+// update timestamp and move the snake
 function update(timeElapsed) {
   accumulatedTime += timeElapsed;
   if (accumulatedTime >= snakeSpeed) {
     moveSnake();
+    if (!highScoresInitialized) {
+      displayHighScores();
+    }
     accumulatedTime -= snakeSpeed;
   }
 };
 
-
+// iterate through the graph, printing each cell 
 function render() {
-  // render all game elements
   let canvas = document.getElementById('canvas');
-  let context = canvas.getContext('2d');
-  //  context.strokeStyle = "blue"; 
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      if (grid[i][j] == borderCell) {
-        context.fillStyle = borderCellColor;
-        context.strokeStyle = cellBorderColor;  
-      }
-      else if (grid[i][j] == obstacleCell) {
-        context.fillStyle = obstacleCellColor;
-        context.strokeStyle = cellBorderColor; 
-      }
-      else if (grid[i][j] == snakeCell) {
-        context.fillStyle = snakeCellColor;
-        context.strokeStyle = cellBorderColor;  
-      }
-      else if (grid[i][j] == appleCell) {
-        context.fillStyle = appleCellColor;
-        context.strokeStyle = cellBorderColor;  
-      }
-      else {
-        context.fillStyle = emptyCellColor;
-        context.strokeStyle = emptyCellColor;
-      }
-      context.fillRect(10 * i, 10 * j, 10, 10);
-      context.strokeRect(10 * i + 0.5, 10 * j + 0.5, 9, 9);
-    };
+  let context = null;
+  if (canvas) {
+    context = canvas.getContext('2d');
+  }
+  if (context) {
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        if (grid[i][j] == borderCell) {
+          context.fillStyle = borderCellColor;
+          context.strokeStyle = cellBorderColor;
+        }
+        else if (grid[i][j] == obstacleCell) {
+          context.fillStyle = obstacleCellColor;
+          context.strokeStyle = cellBorderColor;
+        }
+        else if (grid[i][j] == snakeCell) {
+          context.fillStyle = snakeCellColor;
+          context.strokeStyle = cellBorderColor;
+        }
+        else if (grid[i][j] == appleCell) {
+          context.fillStyle = appleCellColor;
+          context.strokeStyle = cellBorderColor;
+        }
+        else {
+          context.fillStyle = emptyCellColor;
+          context.strokeStyle = emptyCellColor;
+        }
+        context.fillRect(10 * i, 10 * j, 10, 10);
+        // print a border on each cell. For empty cells, border matches background color
+        context.strokeRect(10 * i + 0.5, 10 * j + 0.5, 9, 9);
+      };
+    }
   };
 };
 
+// update the timestamp, update values, and render
 function gameLoop() {
   update(timeElapsed);
   render();
@@ -295,6 +340,7 @@ function gameLoop() {
   };
 };
 
+// process inputs
 function onKeyDown(e) {
   if (e.keyCode === KeyEvent.DOM_VK_A || e.keyCode === KeyEvent.DOM_VK_LEFT) {
     nextDirection = 'l';
@@ -308,8 +354,12 @@ function onKeyDown(e) {
   else if (e.keyCode === KeyEvent.DOM_VK_S || e.keyCode === KeyEvent.DOM_VK_DOWN) {
     nextDirection = 'd';
   }
+  else if (e.keyCode === KeyEvent.DOM_VK_SPACE) {
+    restartButton();
+  }
 };
 
+// start off the first game by setting up the game board and calling gameLoop()
 setupGame();
 window.addEventListener('keydown', onKeyDown);
 requestAnimationFrame(gameLoop); 
