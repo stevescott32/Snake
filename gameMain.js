@@ -71,7 +71,7 @@ function setupGame() {
 
   getHighScores();
   displayHighScores();
-};
+}
 
 // ************************************************
 // ************* Object Placement *****************
@@ -88,8 +88,8 @@ function createBorderAndBackground() {
       else {
         grid[i][j] = 4;
       }
-    };
-  };
+    }
+  }
 }
 
 // put the snake on the board - not on the border or on anything else
@@ -146,7 +146,8 @@ function displayCurrentScore(time) {
     scoreParent.removeChild(scoreParent.firstChild); 
   }
 
-  let scoreText = 'Current Length: ' + snakeLength + ' --> Time: ' + Math.round(time / 1000) + ' seconds'; 
+  let scoreText = 'Current Length: ' + snakeLength 
+    + ' --> Time: ' + Math.round(time / 1000) + ' seconds'; 
   let scoreChild = document.createElement('P'); 
   let scoreTextNode = document.createTextNode(scoreText); 
 
@@ -277,7 +278,7 @@ function restartButton() {
   removeHighScoreNotification(); 
   setupGame();
   requestAnimationFrame(gameLoop);
-};
+}
 
 
 // check if the current direction should be updated
@@ -358,7 +359,7 @@ function update(timeElapsed) {
     }
     accumulatedTime -= snakeSpeed;
   }
-};
+}
 
 // iterate through the graph, printing each cell 
 function render() {
@@ -393,11 +394,11 @@ function render() {
         context.fillRect(10 * i, 10 * j, 10, 10);
         // print a border on each cell. For empty cells, border matches background color
         context.strokeRect(10 * i + 0.5, 10 * j + 0.5, 9, 9);
-      };
+      }
     }
-  };
+  }
   displayCurrentScore(performance.now() - startTime); 
-};
+}
 
 // update the timestamp, update values, and render
 function gameLoop() {
@@ -409,14 +410,15 @@ function gameLoop() {
 
   if (!quit) {
     requestAnimationFrame(gameLoop);
-  };
-};
+  }
+}
 
 // process inputs
 // inputs can come from arrow keys, WASD, or hjkl(vim) 
 // space, enter, or n to start new game, 
 // c to clear high scores 
 // esc to end game, check for high score, and start new game 
+// t, y to display developer credits
 function onKeyDown(e) {
   if (e.keyCode === KeyEvent.DOM_VK_A 
     || e.keyCode === KeyEvent.DOM_VK_LEFT
@@ -447,14 +449,15 @@ function onKeyDown(e) {
   else if(e.keyCode === KeyEvent.DOM_VK_C) {
     clearHighScoresButton(); 
   }
-  else if(e.keyCode === KeyEvent.DOM_VK_T) {
+  else if(e.keyCode === KeyEvent.DOM_VK_Y
+    || e.keyCode === KeyEvent.DOM_VK_T) {
     developerCredits(); 
   }
   else if(e.keyCode === KeyEvent.DOM_VK_ESCAPE) {
     endGame(); 
     restartButton(); 
   }
-};
+}
 
 // start off the first game by setting up the game board and calling gameLoop()
 setupGame();
