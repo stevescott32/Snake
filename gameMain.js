@@ -5,8 +5,8 @@
 // ***************
 
 // styling constants
-let borderCellColor = 'black'; // '#393E41';
-let emptyCellColor = 'green'; //'#2B6845'; 
+let borderCellColor = 'black'; 
+let emptyCellColor = 'green';  
 let obstacleCellColor = 'blue';
 let snakeCellColor = 'white';
 let appleCellColor = 'red';
@@ -73,6 +73,10 @@ function setupGame() {
   displayHighScores();
 };
 
+// ************************************************
+// ************* Object Placement *****************
+// ************************************************
+
 // put a border around the board and create the background
 function createBorderAndBackground() {
   for (let i = 0; i < rows; i++) {
@@ -130,6 +134,26 @@ function placeObstacles() {
   }
 }
 
+// ************************************************
+// ****************** Scoring *********************
+// ************************************************
+
+// print the current score out to the screen 
+function displayCurrentScore(time) {
+  let scoreParent = document.getElementById('current-game-stats'); 
+
+  while(scoreParent && scoreParent.firstChild) {
+    scoreParent.removeChild(scoreParent.firstChild); 
+  }
+
+  let scoreText = 'Current Length: ' + snakeLength + ' --> Time: ' + Math.round(time / 1000) + ' seconds'; 
+  let scoreChild = document.createElement('P'); 
+  let scoreTextNode = document.createTextNode(scoreText); 
+
+  scoreChild.appendChild(scoreTextNode); 
+  scoreParent.appendChild(scoreChild); 
+}
+
 // print the high score list
 function displayHighScores() {
   console.log('printing the high scores');
@@ -151,6 +175,7 @@ function displayHighScores() {
   }
 }
 
+// remove the high score notification after a new game has started
 function removeHighScoreNotification() {
   let notifyParent = document.getElementById('notify-of-high-score'); 
 
@@ -159,6 +184,7 @@ function removeHighScoreNotification() {
   }
 }
 
+// let the user know what their high score was and celebrate their achievement 
 function notifyOfNewHighScore(snakeLength, time) {
   let notifyParent = document.getElementById('notify-of-high-score'); 
 
@@ -210,16 +236,28 @@ function checkForHighScores() {
 // set high scores in local storage so they persist
 function storeHighScores() {
   let highScoreString = JSON.stringify(highScores);
-  window.localStorage.setItem('highScores', highScoreString);
+  window.sessionStorage.setItem('highScores', highScoreString);
 }
 
 // retrieve all high scores from local storage
 function getHighScores() {
-  let highScoresString = window.localStorage.getItem('highScores');
+  let highScoresString = window.sessionStorage.getItem('highScores');
   if (highScoresString) {
     highScores = JSON.parse(highScoresString);
   }
 }
+
+function clearHighScoresButton() {
+  removeHighScoreNotification(); 
+  highScores = []; 
+  storeHighScores(); 
+  getHighScores(); 
+  displayHighScores(); 
+}
+
+// ************************************************
+// ****** Game Stages and Updating ****************
+// ************************************************
 
 // quit the game 
 function endGame() {
@@ -241,13 +279,6 @@ function restartButton() {
   requestAnimationFrame(gameLoop);
 };
 
-function clearHighScoresButton() {
-  removeHighScoreNotification(); 
-  highScores = []; 
-  storeHighScores(); 
-  getHighScores(); 
-  displayHighScores(); 
-}
 
 // check if the current direction should be updated
 // and move the snakeHead based on current direction
@@ -282,7 +313,8 @@ function updateDirection() {
     snakeHead.x--;
     return true;
   }
-  else {
+  else if (currentDirection == '') {
+    startTime = performance.now(); 
     return false;
   }
 }
@@ -317,6 +349,9 @@ function moveSnake() {
 function update(timeElapsed) {
   accumulatedTime += timeElapsed;
   if (accumulatedTime >= snakeSpeed) {
+    if(accumulatedTime > snakeSpeed * 2.5) {
+      accumulatedTime = snakeSpeed * 1.5; 
+    }
     moveSnake();
     if (!highScoresInitialized) {
       displayHighScores();
@@ -361,6 +396,7 @@ function render() {
       };
     }
   };
+  displayCurrentScore(performance.now() - startTime); 
 };
 
 // update the timestamp, update values, and render
