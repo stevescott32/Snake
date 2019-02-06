@@ -16,8 +16,9 @@ let cellBorderColor = 'black';
 let rows = 50;
 let cols = 50;
 
-// obstacles
-let totalObstacles = 15;
+// game difficulty 
+let snakeSpeed = 130;
+let totalObstacles = 20;
 
 // ****************
 // **** State ****
@@ -27,7 +28,6 @@ let totalObstacles = 15;
 let current = performance.now();
 let past = current;
 let timeElapsed = current - past; //initialized to 0
-let snakeSpeed = 150;
 let accumulatedTime = 0;
 let startTime = performance.now();
 let endTime = performance.now();
@@ -83,10 +83,10 @@ function createBorderAndBackground() {
     grid.push([]);
     for (let j = 0; j < cols; j++) {
       if (i == 0 || j == 0 || i == rows - 1 || j == cols - 1) {
-        grid[i][j] = 0;
+        grid[i][j] = 0; // border cell
       }
       else {
-        grid[i][j] = 4;
+        grid[i][j] = 4; // empty cell
       }
     }
   }
@@ -99,7 +99,7 @@ function placeSnakeHead() {
     let randX = Math.floor((Math.random() * rows));
     let randY = Math.floor((Math.random() * cols));
     if (grid[randX][randY] == emptyCell && !headCreated) {
-      grid[randX][randY] = 3;
+      grid[randX][randY] = 3; // snake cell
       snakeHead.x = randX;
       snakeHead.y = randY;
       snake.push({ x: randX, y: randY });
@@ -115,7 +115,7 @@ function placeNewApple() {
     let randX = Math.floor((Math.random() * rows));
     let randY = Math.floor((Math.random() * cols));
     if (grid[randX][randY] == emptyCell) {
-      grid[randX][randY] = 1;
+      grid[randX][randY] = 1; // apple cell
       applePlaced = true;
     }
   }
@@ -128,7 +128,7 @@ function placeObstacles() {
     let randX = Math.floor((Math.random() * rows));
     let randY = Math.floor((Math.random() * cols));
     if (grid[randX][randY] == emptyCell) {
-      grid[randX][randY] = 2;
+      grid[randX][randY] = 2; // obstacle cell
       obstaclesCreated++;
     }
   }
@@ -237,17 +237,18 @@ function checkForHighScores() {
 // set high scores in local storage so they persist
 function storeHighScores() {
   let highScoreString = JSON.stringify(highScores);
-  window.sessionStorage.setItem('highScores', highScoreString);
+  window.localStorage.setItem('highScores', highScoreString);
 }
 
 // retrieve all high scores from local storage
 function getHighScores() {
-  let highScoresString = window.sessionStorage.getItem('highScores');
+  let highScoresString = window.localStorage.getItem('highScores');
   if (highScoresString) {
     highScores = JSON.parse(highScoresString);
   }
 }
 
+// clear existing high scores from screen and from storage
 function clearHighScoresButton() {
   removeHighScoreNotification(); 
   highScores = []; 
@@ -326,7 +327,7 @@ function moveSnake() {
   // check if the snake has encountered an apple or other non-empty cell
   if (moved && grid[snakeHead.x][snakeHead.y] == appleCell) {
     snakeLength += 3;
-    grid[snakeHead.x][snakeHead.y] = 3;
+    grid[snakeHead.x][snakeHead.y] = 3; // snake cell
     snake.unshift({ x: snakeHead.x, y: snakeHead.y });
     placeNewApple();
   }
@@ -342,7 +343,7 @@ function moveSnake() {
 
     snake.unshift({ x: snakeHead.x, y: snakeHead.y });
     let first = snake[0];
-    grid[first.x][first.y] = 3;
+    grid[first.x][first.y] = 3; // snake cell
   }
 }
 
